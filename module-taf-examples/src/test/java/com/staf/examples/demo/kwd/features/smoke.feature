@@ -35,6 +35,13 @@ Feature: EliteA Smoke Suite
     And I click 'docsbot_library' text in 'EliteaPromptsPage -> tags' collection
     Then I expect text of elements in 'EliteaPromptsPage -> promptCards' collection contains 'docsbot_library'
 
+Scenario: TC05 - Edit Existing Prompt
+  And I click '1st' element in 'EliteaPromptsPage -> promptCards' collection
+  Then I click "EliteaEditPromptPage -> editButton"
+  Then I type "Updated Test Context" to "EliteaEditPromptPage -> contextTextarea"
+  And I click "EliteaEditPromptPage -> saveButton"
+  Then I expect 'EliteaEditPromptPage -> saveButton' to be not clickable
+
 #  # Deprecated functionality. Keeping this to visualize cross-steps variables interaction.
 #  Scenario: TC04 - Filter Prompt by Owner
 #    And I save '1st' element text of 'EliteaPromptsPage -> ownerName' collection to '${OWNER}' variable
