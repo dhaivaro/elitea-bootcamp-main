@@ -41,3 +41,10 @@ Feature: EliteA Smoke Suite
 #    And I click '1st' element in 'EliteaPromptsPage -> promptCards' collection
 #    And I wait 5 seconds
 #    And I expect text of elements in 'EliteaPromptsPage -> ownerName' collection equals to '${OWNER}'
+
+  Scenario: TC05 - Edit Existing Prompt
+    And I click '1st' element in 'EliteaPromptsPage -> promptCards' collection
+    Then I click "EliteaEditPromptPage -> editButton"
+    Then I type "Updated Test Context" to "EliteaEditPromptPage -> contextTextarea"
+    And I click "EliteaEditPromptPage -> saveButton"
+    Then I expect 'EliteaEditPromptPage -> saveButton' to be not clickable
