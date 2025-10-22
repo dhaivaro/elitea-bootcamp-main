@@ -1,1 +1,77 @@
 
+name: Cucumber Tests
+ 
+on:
+  workflow_dispatch:
+    inputs:
+      feature_file:
+        description: 'Feature file name (without .feature extension)'
+        required: false
+        default: 'smoke'
+        type: string
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+ 
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Set up JDK
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+    - name: Cache Maven dependencies
+      uses: actions/cache@v4
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
+    - name: Set feature file name
+      run: |
+        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          echo "FEATURE_NAME=${{ github.event.inputs.feature_file }}" >> $GITHUB_ENV
+        else
+          echo "FEATURE_NAME=smoke" >> $GITHUB_ENV
+        fi
+    - name: Build project
+      run: mvn clean install -DskipTests -Dpmd.skip=true -Dcheckstyle.skip=true
+    - name: Run Cucumber Tests
+      run: |
+        mvn test -pl module-taf-examples -e \
+          -Dpmd.skip=true \
+          -Dcheckstyle.skip=true \
+          -Dtest=com.staf.examples.demo.kwd.runner.KwdRunner \
+          -Dcucumber.features=src/test/java/com/staf/examples/demo/kwd/features/${FEATURE_NAME}.feature \
+          -Dselenide.headless=true \
+          -Dselenide.browser=chrome \
+          -Dselenide.browserSize=1920x1080 \
+          -Dselenide.timeout=30000 \
+          -Dselenide.pageLoadTimeout=60000 \
+          -Dselenide.reportsFolder=build \
+          -Dchromeoptions.args="--headless,--no-sandbox,--disable-dev-shm-usage,--disable-gpu,--disable-extensions,--disable-blink-features=AutomationControlled,--disable-web-security,--allow-running-insecure-content,--disable-features=VizDisplayCompositor,--remote-debugging-port=0,--user-data-dir=/tmp/chrome-user-data-$(date +%s)-$$"
+ 
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results
+        path: |
+          module-taf-examples/target/surefire-reports/
+          module-taf-examples/build/
+        retention-days: 30
+    - name: Publish TestNG Test Report
+      uses: starburstdata/action-testng-report@v1
+      if: always()
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        report_paths: 'module-taf-examples/target/surefire-reports/testng-results.xml'
+        check_name: 'Cucumber Test Results'
