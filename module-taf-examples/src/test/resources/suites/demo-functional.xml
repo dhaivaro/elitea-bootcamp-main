@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+
+<suite name="Functional suite [TestNG]" verbose="1">
+    <listeners>
+        <listener class-name="com.staf.testng.listener.RetryListener"></listener>
+    </listeners>
+    <test name="Functional tests">
+        <classes>
+            <class name="com.staf.examples.demo.common.FunctionalTest"/>
+        </classes>
+    </test>
+</suite>
