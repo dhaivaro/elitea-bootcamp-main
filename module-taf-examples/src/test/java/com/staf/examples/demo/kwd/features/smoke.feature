@@ -12,6 +12,17 @@ Feature: EliteA Smoke Suite
     And I click "EliteaMainPage -> privateProjectListItem"
     And I click "EliteaMainPage -> menuButton"
     And I click "EliteaMainPage -> promptMenuItem"
+
+  Scenario: TC05 - Edit Existing Prompt
+    And I click '1st' element in 'EliteaPromptsPage -> promptCards' collection
+    Then I expect 'EliteaEditPromptPage -> editButton' to be visible
+    And I click "EliteaEditPromptPage -> editButton"
+    Then I type "Updated Context Information" to "EliteaEditPromptPage -> contextTextarea"
+    And I click "EliteaEditPromptPage -> saveButton"
+    And I click "EliteaEditPromptPage_TEST -> editButton"
+    And I click "EliteaEditPromptPage_TEST -> saveButton"
+    Then I expect 'EliteaEditPromptPage -> versionDropdown' to be visible
+    Then I expect 'EliteaEditPromptPage -> saveButton' to be not clickable
     
   Scenario: TC01 - Create Prompt with All Mandatory Fields
     And I click "EliteaPromptsPage -> addPromptButton"
