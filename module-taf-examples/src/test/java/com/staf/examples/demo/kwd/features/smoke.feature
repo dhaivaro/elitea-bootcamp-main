@@ -1,5 +1,17 @@
 Feature: EliteA Smoke Suite
 
+  Scenario: TC05 - Edit Existing Prompt
+    And I click "1st" element in "EliteaPromptsPage -> promptCards" collection
+    Then I expect "EliteaEditPromptPage -> editButton" to be visible
+    And I click "EliteaEditPromptPage -> editButton"
+    Then I clear "EliteaEditPromptPage -> contextTextarea"
+    Then I type "Updated Test Context" to "EliteaEditPromptPage -> contextTextarea"
+    And I click "EliteaEditPromptPage -> saveButton"
+    And I click "EliteaEditPrompt_TEST -> editButton"
+    And I click "EliteaEditPromptPage_TEST -> saveButton"
+    Then I expect "EliteaEditPromptPage -> versionDropdown" to be visible
+    Then I expect "EliteaEditPromptPage -> saveButton" to be not clickable
+
   Background:
     Given I open 'https://nexus.elitea.ai' url
     Then I type "alita@elitea.ai" to "EliteaLoginPage -> usernameInput"
